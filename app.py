@@ -61,9 +61,9 @@ def format_date(date_str):
 def save_cleaner_info(row):
     """Save cleaner information to JSON file"""
     cleaner_data = {
-        "Flat": row["Apto"],
-        "NextCheckIn": row["Próxima Entrada"],
-        "Cleaner": row["Limpeza"],
+        "Flat": row["AP"],
+        "NextCheckIn": row["Entrada"],
+        "Cleaner": row["FX"],
     }
 
     # Load existing data
@@ -134,14 +134,14 @@ def main():
             # Rename and reorder columns as before
             display_df = df_display.rename(
                 columns={
-                    "Flat": "Apto",
-                    "CheckOut": "CheckOut",
-                    "NextCheckIn": "CheckIn",
-                    "Cleaner": "Limpeza",
+                    "Flat": "AP",
+                    "CheckOut": "Saída",
+                    "NextCheckIn": "Entrada",
+                    "Cleaner": "FX",
                     "HotBed": "H",
                 }
             )
-            columns_order = ["H", "Apto", "CheckOut", "CheckIn", "Limpeza"]
+            columns_order = ["H", "AP", "Saída", "Entrada", "FX"]
             display_df = display_df[columns_order]
 
             # Display table with callback
