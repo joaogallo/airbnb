@@ -135,7 +135,7 @@ def main():
             display_df = df_display.rename(
                 columns={
                     "Flat": "Apto",
-                    "CheckOut": "ChecOut",
+                    "CheckOut": "CheckOut",
                     "NextCheckIn": "CheckIn",
                     "Cleaner": "Limpeza",
                     "HotBed": "H",
