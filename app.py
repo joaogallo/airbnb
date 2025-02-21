@@ -141,7 +141,7 @@ def main():
                     "HotBed": "H",
                 }
             )
-            columns_order = ["Hot", "Apto", "Saída", "Próxima Entrada", "Limpeza"]
+            columns_order = ["H", "Apto", "CheckOut", "CheckIn", "Limpeza"]
             display_df = display_df[columns_order]
 
             # Display table with callback
