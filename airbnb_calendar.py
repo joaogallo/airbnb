@@ -2,6 +2,9 @@ import requests
 import pandas as pd
 from icalendar import Calendar
 from datetime import datetime, date
+import ace_tools_open as tools
+import json
+import os
 
 
 def get_airbnb_ical(ical_url):
@@ -13,10 +16,23 @@ def get_airbnb_ical(ical_url):
         return None
 
 
+def load_cleaners():
+    """Load cleaner assignments from JSON file"""
+    filename = "cleaners.json"
+    if os.path.exists(filename):
+        with open(filename, "r") as f:
+            return json.load(f)
+    return []
+
+
 def parse_ical_data(flat, ical_text):
+
     calendar = Calendar.from_ical(ical_text)
     cleaning_schedule = []
     cleaning_interval = None
+
+    # Load saved cleaner assignments
+    cleaners_data = load_cleaners()
 
     # Criar uma lista de eventos e ordenar por DTSTART
     events = sorted(calendar.walk("VEVENT"), key=lambda event: event.get("DTSTART").dt)
@@ -27,6 +43,14 @@ def parse_ical_data(flat, ical_text):
         if cleaning_interval is not None:
             if event_count < len(events):
                 cleaning_interval["NextCheckIn"] = start
+                # Look for matching cleaner assignment
+                for cleaner_entry in cleaners_data:
+                    if cleaner_entry["Flat"] == flat and cleaner_entry[
+                        "NextCheckIn"
+                    ] == start.strftime("%d/%m/%Y"):
+                        cleaning_interval["Cleaner"] = cleaner_entry["Cleaner"]
+                        break
+
             if end == start:
                 cleaning_interval["HotBed"] = True
             cleaning_schedule.append(cleaning_interval)
@@ -80,6 +104,5 @@ if __name__ == "__main__":
     df_cleaning = cleaning_schedule(ical_calendars, months=3)
 
     if df_cleaning is not None:
-        import ace_tools_open as tools
 
         tools.display_dataframe_to_user("Limpeza dos Airbnbs", df_cleaning)
