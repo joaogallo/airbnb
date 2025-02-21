@@ -135,10 +135,10 @@ def main():
             display_df = df_display.rename(
                 columns={
                     "Flat": "Apto",
-                    "CheckOut": "Saída",
-                    "NextCheckIn": "Próxima Entrada",
+                    "CheckOut": "ChecOut",
+                    "NextCheckIn": "CheckIn",
                     "Cleaner": "Limpeza",
-                    "HotBed": "Hot",
+                    "HotBed": "H",
                 }
             )
             columns_order = ["Hot", "Apto", "Saída", "Próxima Entrada", "Limpeza"]
