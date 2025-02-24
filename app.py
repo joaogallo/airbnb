@@ -67,7 +67,7 @@ def save_cleaner_info(row):
     }
 
     # Load existing data
-    filename = "/mount/cleaners.json"
+    filename = "~/.streamlit/cleaners.json"
     existing_data = []
     if os.path.exists(filename):
         with open(filename, "r") as f:
