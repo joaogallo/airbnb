@@ -106,7 +106,18 @@ def main():
         df_display = df.copy()
         df_display["CheckOut"] = df_display["CheckOut"].apply(format_date)
         df_display["NextCheckIn"] = df_display["NextCheckIn"].apply(format_date)
-        df_display["HotBed"] = df_display["HotBed"].apply(lambda x: "🔥" if x else "")
+
+        # Modify Cleaner column to include 🔥 for HotBed
+        df_display["Cleaner"] = df_display.apply(
+            lambda row: f"🔥 {row['Cleaner']}"
+            if row["HotBed"] and row["Cleaner"]
+            else "🔥"
+            if row["HotBed"]
+            else row["Cleaner"]
+            if row["Cleaner"]
+            else "",
+            axis=1,
+        )
 
         # Create a unique key for each row based on Flat and CheckOut
         df_display["row_key"] = df_display.apply(
@@ -124,10 +135,9 @@ def main():
                     "CheckOut": "Saída",
                     "NextCheckIn": "Entrada",
                     "Cleaner": "FX",
-                    "HotBed": "H",
                 }
             )
-            columns_order = ["H", "AP", "Saída", "Entrada", "FX"]
+            columns_order = ["AP", "Saída", "Entrada", "FX"]
             display_df = display_df[columns_order]
 
             # Display table with callback
