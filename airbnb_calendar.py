@@ -25,6 +25,15 @@ def load_cleaners():
     return []
 
 
+def load_calendars():
+    """Load cleaner assignments from JSON file"""
+    filename = "calendars.json"
+    if os.path.exists(filename):
+        with open(filename, "r") as f:
+            return json.load(f)
+    return []
+
+
 def parse_ical_data(flat, ical_text):
 
     calendar = Calendar.from_ical(ical_text)
@@ -86,20 +95,7 @@ def cleaning_schedule(ical_calendars, months=3):
 
 
 if __name__ == "__main__":
-    ical_calendars = [
-        {
-            "flat": "606",
-            "url": "https://www.airbnb.com.br/calendar/ical/1348473671779041594.ics?s=2f66c0dae2f36b7c846d5dd6e467c579",
-        },
-        {
-            "flat": "908",
-            "url": "https://www.airbnb.com.br/calendar/ical/1197793524730371217.ics?s=27eb51cf5b5eb72eae6baad6416b4142",
-        },
-        {
-            "flat": "1108",
-            "url": "https://www.airbnb.com.br/calendar/ical/562288913448118889.ics?s=a6b8340d6cf8a6642507685a2434255a",
-        },
-    ]
+    ical_calendars = load_calendars()
 
     df_cleaning = cleaning_schedule(ical_calendars, months=3)
 
