@@ -58,6 +58,56 @@ def format_date(date_str):
         return ""
 
 
+def format_date_with_indicator(date_str):
+    """Format date string and add indicator for past/today dates"""
+    if not date_str or date_str == "":
+        return ""
+    try:
+        date = pd.to_datetime(date_str)
+        formatted_date = date.strftime("%d/%m/%Y")
+        # Add green circle if date is today or past
+        if date.date() <= pd.Timestamp.now().date():
+            return f"{formatted_date} 🟢"
+        return formatted_date
+    except:
+        return ""
+
+
+def format_checkout_indicator(date_str):
+    """Format checkout date and add green indicator for past/today dates"""
+    if not date_str or date_str == "":
+        return ""
+    try:
+        date = pd.to_datetime(date_str)
+        formatted_date = date.strftime("%d/%m/%Y")
+        # Add green circle if date is today or past
+        if date.date() <= pd.Timestamp.now().date():
+            return f"{formatted_date} 🟢"
+        return formatted_date
+    except:
+        return ""
+
+
+def format_checkin_indicator(date_str):
+    """Format check-in date and add red/yellow indicators based on urgency"""
+    if not date_str or date_str == "":
+        return ""
+    try:
+        date = pd.to_datetime(date_str)
+        formatted_date = date.strftime("%d/%m/%Y")
+        today = pd.Timestamp.now().date()
+        tomorrow = today + pd.Timedelta(days=1)
+
+        # Add colored circle based on date
+        if date.date() == today:
+            return f"{formatted_date} 🔴"  # Red for today's check-in
+        elif date.date() == tomorrow:
+            return f"{formatted_date} 🟡"  # Yellow for tomorrow's check-in
+        return formatted_date
+    except:
+        return ""
+
+
 def save_cleaner_info(row):
     """Save cleaner information to JSON file"""
     cleaner_data = {
@@ -104,8 +154,10 @@ def main():
     if df is not None:
         # Format the dates and prepare display DataFrame
         df_display = df.copy()
-        df_display["CheckOut"] = df_display["CheckOut"].apply(format_date)
-        df_display["NextCheckIn"] = df_display["NextCheckIn"].apply(format_date)
+        df_display["CheckOut"] = df_display["CheckOut"].apply(format_checkout_indicator)
+        df_display["NextCheckIn"] = df_display["NextCheckIn"].apply(
+            format_checkin_indicator
+        )
 
         # Modify Cleaner column to include 🔥 for HotBed
         df_display["Cleaner"] = df_display.apply(
