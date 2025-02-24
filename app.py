@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from airbnb_calendar import cleaning_schedule
+from airbnb_calendar import cleaning_schedule, load_calendars
 import json
 import os
 
@@ -67,11 +67,13 @@ def save_cleaner_info(row):
     }
 
     # Load existing data
-    filename = "cleaners.json"
+    filename = "/mount/cleaners.json"
     existing_data = []
     if os.path.exists(filename):
         with open(filename, "r") as f:
             existing_data = json.load(f)
+    else:
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
 
     # Update or add new entry
     updated = False
@@ -95,23 +97,7 @@ def save_cleaner_info(row):
 def main():
     st.title("Limpeza VanGogh")
 
-    ical_calendars = [
-        {
-            "flat": "606",
-            "url": "https://www.airbnb.com.br/calendar/ical/1348473671779041594.ics?s=2f66c0dae2f36b7c846d5dd6e467c579",
-            "owner": "João",
-        },
-        {
-            "flat": "908",
-            "url": "https://www.airbnb.com.br/calendar/ical/1197793524730371217.ics?s=27eb51cf5b5eb72eae6baad6416b4142",
-            "owner": "João",
-        },
-        {
-            "flat": "1108",
-            "url": "https://www.airbnb.com.br/calendar/ical/562288913448118889.ics?s=a6b8340d6cf8a6642507685a2434255a",
-            "owner": "João",
-        },
-    ]
+    ical_calendars = load_calendars()
 
     df = cleaning_schedule(ical_calendars)
 

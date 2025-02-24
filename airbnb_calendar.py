@@ -18,7 +18,7 @@ def get_airbnb_ical(ical_url):
 
 def load_cleaners():
     """Load cleaner assignments from JSON file"""
-    filename = "cleaners.json"
+    filename = "/mount/cleaners.json"
     if os.path.exists(filename):
         with open(filename, "r") as f:
             return json.load(f)
