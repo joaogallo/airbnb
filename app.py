@@ -215,17 +215,22 @@ def main():
             """
             <style>
             .dataframe {
-                font-size: 14px !important;
+                font-size: 12px !important;  /* Reduced from 14px */
                 width: 100% !important;
                 text-align: center !important;
                 table-layout: fixed !important;
             }
             .dataframe td, .dataframe th {
                 white-space: nowrap;
-                padding: 8px !important;
+                padding: 6px !important;     /* Reduced from 8px */
                 text-align: center !important;
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
+                font-size: 12px !important;  /* Added explicit font size for cells */
+            }
+            .dataframe th {
+                font-size: 13px !important;  /* Slightly larger font for headers */
+                font-weight: bold !important;
             }
             .dataframe td:first-child, .dataframe th:first-child {
                 width: 40px !important;
