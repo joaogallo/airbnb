@@ -94,6 +94,42 @@ def cleaning_schedule(ical_calendars, months=3):
     return df
 
 
+def save_cleaner_info(apto, entrada, cleaner):
+    """Save cleaner information to JSON file"""
+    cleaner_data = {
+        "Flat": apto,
+        "NextCheckIn": entrada,
+        "Cleaner": cleaner,
+    }
+
+    # Load existing data
+    filename = "~/.streamlit/cleaners.json"
+    existing_data = []
+    if os.path.exists(filename):
+        with open(filename, "r") as f:
+            existing_data = json.load(f)
+    else:
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+    # Update or add new entry
+    updated = False
+    for entry in existing_data:
+        if (
+            entry["Flat"] == cleaner_data["Flat"]
+            and entry["NextCheckIn"] == cleaner_data["NextCheckIn"]
+        ):
+            entry["Cleaner"] = cleaner_data["Cleaner"]
+            updated = True
+            break
+
+    if not updated:
+        existing_data.append(cleaner_data)
+
+    # Save back to file
+    with open(filename, "w") as f:
+        json.dump(existing_data, f, indent=2)
+
+
 if __name__ == "__main__":
     ical_calendars = load_calendars()
 

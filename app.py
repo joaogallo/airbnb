@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from airbnb_calendar import cleaning_schedule, load_calendars
+from airbnb_calendar import cleaning_schedule, load_calendars, insert_cleaner
 import json
 import os
 
@@ -109,39 +109,8 @@ def format_checkin_indicator(date_str):
 
 
 def save_cleaner_info(row):
-    """Save cleaner information to JSON file"""
-    cleaner_data = {
-        "Flat": row["AP"],
-        "NextCheckIn": row["Entrada"],
-        "Cleaner": row["FX"],
-    }
-
-    # Load existing data
-    filename = "~/.streamlit/cleaners.json"
-    existing_data = []
-    if os.path.exists(filename):
-        with open(filename, "r") as f:
-            existing_data = json.load(f)
-    else:
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-
-    # Update or add new entry
-    updated = False
-    for entry in existing_data:
-        if (
-            entry["Flat"] == cleaner_data["Flat"]
-            and entry["NextCheckIn"] == cleaner_data["NextCheckIn"]
-        ):
-            entry["Cleaner"] = cleaner_data["Cleaner"]
-            updated = True
-            break
-
-    if not updated:
-        existing_data.append(cleaner_data)
-
-    # Save back to file
-    with open(filename, "w") as f:
-        json.dump(existing_data, f, indent=2)
+    insert_cleaner(row["AP"], row["Entrada"], row["FX"])
+    st.success("Informações de faxina salvas com sucesso!")
 
 
 def main():
