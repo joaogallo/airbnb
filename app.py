@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from airbnb_calendar import cleaning_schedule, load_calendars, insert_cleaner
+import airbnb_calendar
 import json
 import os
 
@@ -109,16 +109,20 @@ def format_checkin_indicator(date_str):
 
 
 def save_cleaner_info(row):
-    insert_cleaner(row["AP"], row["Entrada"], row["FX"])
-    st.success("Informações de faxina salvas com sucesso!")
+    """UI wrapper for saving cleaner information"""
+    try:
+        if airbnb_calendar.save_cleaner_info(row["AP"], row["Entrada"], row["FX"]):
+            st.success("Informações de faxina salvas com sucesso!")
+    except Exception as e:
+        st.error(f"Erro ao salvar informações: {str(e)}")
 
 
 def main():
     st.title("Limpeza VanGogh")
 
-    ical_calendars = load_calendars()
+    ical_calendars = airbnb_calendar.load_calendars()
 
-    df = cleaning_schedule(ical_calendars)
+    df = airbnb_calendar.cleaning_schedule(ical_calendars)
 
     if df is not None:
         # Format the dates and prepare display DataFrame
