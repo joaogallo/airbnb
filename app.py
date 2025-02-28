@@ -1,8 +1,7 @@
 import streamlit as st
 import pandas as pd
 import airbnb_calendar
-import json
-import os
+
 
 # Configure the page for mobile-first design
 st.set_page_config(
@@ -111,14 +110,19 @@ def format_checkin_indicator(date_str):
 def save_cleaner_info(row):
     """UI wrapper for saving cleaner information"""
     try:
-        if airbnb_calendar.save_cleaner_info(row["AP"], row["Entrada"], row["FX"]):
+        # Convert date from dd/mm/yyyy to yyyy-mm-dd
+        entrada_date = pd.to_datetime(
+            row["Entrada"].split()[0], format="%d/%m/%Y"
+        ).strftime("%Y-%m-%d")
+
+        if airbnb_calendar.save_cleaner_info(row["AP"], entrada_date, row["FX"]):
             st.success("Informações de faxina salvas com sucesso!")
     except Exception as e:
         st.error(f"Erro ao salvar informações: {str(e)}")
 
 
 def main():
-    st.title("Limpeza VanGogh")
+    st.title("VanGogh AirBnB")
 
     ical_calendars = airbnb_calendar.load_calendars()
 

@@ -98,7 +98,7 @@ def parse_ical_data(flat, ical_text):
     save_bookings(bookings_data)
 
     # Continue with existing cleaning schedule logic
-    cleaners_data = load_cleaners()
+    # cleaners_data = load_cleaners()
 
     event_count = 0
     for event in events:
@@ -108,12 +108,12 @@ def parse_ical_data(flat, ical_text):
             if event_count < len(events):
                 cleaning_interval["NextCheckIn"] = start
                 # Look for matching cleaner assignment
-                for cleaner_entry in cleaners_data:
-                    if cleaner_entry["Flat"] == flat and cleaner_entry[
-                        "NextCheckIn"
-                    ] == start.strftime("%d/%m/%Y"):
-                        cleaning_interval["Cleaner"] = cleaner_entry["Cleaner"]
-                        break
+                # for cleaner_entry in cleaners_data:
+                #     if cleaner_entry["Flat"] == flat and cleaner_entry[
+                #         "NextCheckIn"
+                #     ] == start.strftime("%d/%m/%Y"):
+                #         cleaning_interval["Cleaner"] = cleaner_entry["Cleaner"]
+                #         break
 
             if end == start:
                 cleaning_interval["HotBed"] = True
@@ -152,7 +152,7 @@ def cleaning_schedule(ical_calendars, months=3):
 def save_cleaner_info(ap, entrada, fx):
     """Save cleaner information to bookings.json"""
     # Load existing bookings
-    filename = "bookings.json"
+    filename = "~/.streamlit/bookings.json"
     if not os.path.exists(filename):
         raise FileNotFoundError("Arquivo de bookings não encontrado")
 
@@ -185,7 +185,7 @@ def save_cleaner_info(ap, entrada, fx):
 if __name__ == "__main__":
     ical_calendars = load_calendars()
 
-    df_cleaning = cleaning_schedule(ical_calendars, months=3)
+    df_cleaning = cleaning_schedule(ical_calendars)
 
     if df_cleaning is not None:
 
