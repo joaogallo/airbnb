@@ -1,4 +1,7 @@
-~/.streamlit/
+// Description: This file is used to ignore files and directories in the repository.
+// More info: https://docs.github.com/en/github/using-git/ignoring-files
+
+~/.streamlit/bookings.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
