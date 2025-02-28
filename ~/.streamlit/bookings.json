@@ -1,0 +1,219 @@
+{
+  "flats": [
+    {
+      "flat": "403",
+      "bookings": [
+        {
+          "UID": "1418fb94e984-f886ab8f3afba980eacc163a4c23a23e@airbnb.com",
+          "CheckIn": "2025-02-28",
+          "CheckOut": "2025-03-05"
+        },
+        {
+          "UID": "1418fb94e984-46e33bc61cc109f2631a792bc9d41839@airbnb.com",
+          "CheckIn": "2025-03-05",
+          "CheckOut": "2025-04-01"
+        },
+        {
+          "UID": "1418fb94e984-6f0e66c4a60bf25ff49bb37e0b96b5e6@airbnb.com",
+          "CheckIn": "2025-04-01",
+          "CheckOut": "2025-08-10"
+        },
+        {
+          "UID": "7f662ec65913-7f17d8bb6d56de0f02b3f6a7d7af9273@airbnb.com",
+          "CheckIn": "2026-02-28",
+          "CheckOut": "2026-03-01"
+        }
+      ]
+    },
+    {
+      "flat": "404",
+      "bookings": [
+        {
+          "UID": "1418fb94e984-08f43a0174e75b0492686d7ac83de2e8@airbnb.com",
+          "CheckIn": "2025-01-31",
+          "CheckOut": "2025-02-28"
+        },
+        {
+          "UID": "1418fb94e984-c9acdfbf181fdbfa0f9316f1f06e4088@airbnb.com",
+          "CheckIn": "2025-03-01",
+          "CheckOut": "2025-03-05"
+        },
+        {
+          "UID": "1418fb94e984-43bfadb8c1cc8b6ad3245fe282cc0c64@airbnb.com",
+          "CheckIn": "2025-03-05",
+          "CheckOut": "2025-03-09"
+        },
+        {
+          "UID": "1418fb94e984-178e0e8a5017d34e9b2ba08744ca4655@airbnb.com",
+          "CheckIn": "2025-03-09",
+          "CheckOut": "2025-03-15"
+        },
+        {
+          "UID": "1418fb94e984-d8abeb26e5eda7ec7bdd825a6a41eded@airbnb.com",
+          "CheckIn": "2025-03-16",
+          "CheckOut": "2025-04-13"
+        },
+        {
+          "UID": "1418fb94e984-8e13b62e51a8770e546b188e25f0a7f0@airbnb.com",
+          "CheckIn": "2025-04-16",
+          "CheckOut": "2025-04-20"
+        },
+        {
+          "UID": "1418fb94e984-ea5072541e6e78d8ad26e8ab7f7b2a20@airbnb.com",
+          "CheckIn": "2025-04-20",
+          "CheckOut": "2025-04-27"
+        },
+        {
+          "UID": "1418fb94e984-6ab772b2ddb17ee4a0c99d9102dee818@airbnb.com",
+          "CheckIn": "2025-04-29",
+          "CheckOut": "2025-05-02"
+        },
+        {
+          "UID": "7f662ec65913-c057dbb86c14c99e83db9c343a883f54@airbnb.com",
+          "CheckIn": "2025-05-29",
+          "CheckOut": "2026-03-01"
+        }
+      ]
+    },
+    {
+      "flat": "407",
+      "bookings": [
+        {
+          "UID": "1418fb94e984-4837a1f2289243a2bbccbf4485d64a7c@airbnb.com",
+          "CheckIn": "2025-02-02",
+          "CheckOut": "2025-02-28"
+        },
+        {
+          "UID": "1418fb94e984-854f4286eae78197ead4920d8809ed8c@airbnb.com",
+          "CheckIn": "2025-02-28",
+          "CheckOut": "2025-03-03"
+        },
+        {
+          "UID": "7f662ec65913-2ad30d010357b2e7b60481f6b211d942@airbnb.com",
+          "CheckIn": "2025-03-05",
+          "CheckOut": "2025-04-30"
+        },
+        {
+          "UID": "7f662ec65913-f4adb281ec5bec05d19a2b97f56c1dcf@airbnb.com",
+          "CheckIn": "2025-05-01",
+          "CheckOut": "2025-05-18"
+        },
+        {
+          "UID": "7f662ec65913-c057dbb86c14c99e83db9c343a883f54@airbnb.com",
+          "CheckIn": "2025-05-29",
+          "CheckOut": "2026-03-01"
+        }
+      ]
+    },
+    {
+      "flat": "606",
+      "bookings": [
+        {
+          "UID": "1418fb94e984-bbb2a974900c0432c5fcfb49ea80595a@airbnb.com",
+          "CheckIn": "2025-02-28",
+          "CheckOut": "2025-03-04"
+        },
+        {
+          "UID": "1418fb94e984-676736930280f4c4d5457ba0c3d977a4@airbnb.com",
+          "CheckIn": "2025-03-05",
+          "CheckOut": "2025-04-04"
+        },
+        {
+          "UID": "1418fb94e984-2fdda46956d90366e6f6ad172a32561d@airbnb.com",
+          "CheckIn": "2025-04-05",
+          "CheckOut": "2025-04-08"
+        },
+        {
+          "UID": "7f662ec65913-c057dbb86c14c99e83db9c343a883f54@airbnb.com",
+          "CheckIn": "2025-05-29",
+          "CheckOut": "2026-03-01"
+        }
+      ]
+    },
+    {
+      "flat": "908",
+      "bookings": [
+        {
+          "UID": "1418fb94e984-8c880a84c042d0ba484b4139450add8b@airbnb.com",
+          "CheckIn": "2025-02-28",
+          "CheckOut": "2025-03-04"
+        },
+        {
+          "UID": "1418fb94e984-d43a250993054c9117b00a58f95e75a9@airbnb.com",
+          "CheckIn": "2025-03-08",
+          "CheckOut": "2025-04-06"
+        },
+        {
+          "UID": "1418fb94e984-04505a2d3b79cb4a7d11bed8366dbb53@airbnb.com",
+          "CheckIn": "2025-04-06",
+          "CheckOut": "2025-04-09"
+        },
+        {
+          "UID": "7f662ec65913-c057dbb86c14c99e83db9c343a883f54@airbnb.com",
+          "CheckIn": "2025-05-29",
+          "CheckOut": "2026-03-01"
+        }
+      ]
+    },
+    {
+      "flat": "1101",
+      "bookings": [
+        {
+          "UID": "1418fb94e984-284f71ee55da8d90eda70403499ef06d@airbnb.com",
+          "CheckIn": "2025-02-28",
+          "CheckOut": "2025-03-05"
+        },
+        {
+          "UID": "1418fb94e984-099474df414a355d050557cbf5b983bc@airbnb.com",
+          "CheckIn": "2025-03-06",
+          "CheckOut": "2025-03-09"
+        },
+        {
+          "UID": "1418fb94e984-fdc315b01c2e3670a5d8f6e9af6943e0@airbnb.com",
+          "CheckIn": "2025-03-19",
+          "CheckOut": "2025-03-23"
+        },
+        {
+          "UID": "1418fb94e984-587d9ecfd11d6142a0cf9178c6f3edb2@airbnb.com",
+          "CheckIn": "2025-04-05",
+          "CheckOut": "2025-04-08"
+        },
+        {
+          "UID": "1418fb94e984-b0e605609f3b5b0ab30ef0a123b678d5@airbnb.com",
+          "CheckIn": "2025-04-16",
+          "CheckOut": "2025-04-19"
+        },
+        {
+          "UID": "1418fb94e984-37365da8094c95c093b25ef0f9eaafaa@airbnb.com",
+          "CheckIn": "2025-05-20",
+          "CheckOut": "2025-05-25"
+        },
+        {
+          "UID": "7f662ec65913-558d0dbc39e99b04c8d6e7f7bb9e1e22@airbnb.com",
+          "CheckIn": "2025-11-25",
+          "CheckOut": "2026-03-01"
+        }
+      ]
+    },
+    {
+      "flat": "1108",
+      "bookings": [
+        {
+          "UID": "1418fb94e984-12716ac78bbc3331ee45024c7f460ada@airbnb.com",
+          "CheckIn": "2025-01-28",
+          "CheckOut": "2025-03-01"
+        },
+        {
+          "UID": "1418fb94e984-3507d139602326d52d7fc03b90e67d70@airbnb.com",
+          "CheckIn": "2025-03-01",
+          "CheckOut": "2025-03-05"
+        },
+        {
+          "UID": "7f662ec65913-c057dbb86c14c99e83db9c343a883f54@airbnb.com",
+          "CheckIn": "2025-05-29",
+          "CheckOut": "2026-03-01"
+        }
+      ]
+    }
+  ]
+}
