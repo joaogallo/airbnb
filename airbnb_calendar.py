@@ -81,44 +81,52 @@ def parse_ical_data(flat, ical_text):
     # Update flat bookings
     new_bookings = []
     existing_uids = {b["UID"] for b in current_bookings}
+    current_bookings_dict = {b["UID"]: b for b in current_bookings}
 
-    # Keep existing bookings that are either in current_bookings or have past checkout
+    # First, process existing bookings
     for booking in flat_entry["bookings"]:
-        checkout_date = pd.to_datetime(booking["CheckOut"])
-        if booking["UID"] in existing_uids or checkout_date <= today:
+        if booking["UID"] in existing_uids:
+            # Merge booking data: keep Cleaner from existing, dates from current
+            current_booking = current_bookings_dict[booking["UID"]]
+            new_booking = {
+                "UID": booking["UID"],
+                "CheckIn": current_booking["CheckIn"],
+                "CheckOut": current_booking["CheckOut"],
+                "Cleaner": booking.get("Cleaner"),  # Preserve existing Cleaner
+            }
+            new_bookings.append(new_booking)
+        elif pd.to_datetime(booking["CheckOut"]) <= today:
+            # Keep past bookings as they are
             new_bookings.append(booking)
 
-    # Add new bookings
+    # Add new bookings that weren't in flat_entry
     existing_uids = {b["UID"] for b in new_bookings}
     for booking in current_bookings:
         if booking["UID"] not in existing_uids:
-            new_bookings.append(booking)
+            new_bookings.append(
+                {
+                    "UID": booking["UID"],
+                    "CheckIn": booking["CheckIn"],
+                    "CheckOut": booking["CheckOut"],
+                    "Cleaner": None,
+                }
+            )
 
     flat_entry["bookings"] = new_bookings
     save_bookings(bookings_data)
 
-    # Continue with existing cleaning schedule logic
-    # cleaners_data = load_cleaners()
-
-    event_count = 0
-    for event in events:
-        event_count += 1
-        start = event.get("DTSTART").dt
+    booking_count = 0
+    for booking in new_bookings:
+        booking_count += 1
+        start = pd.to_datetime(booking["CheckIn"]).date()
         if cleaning_interval is not None:
-            if event_count < len(events):
+            if booking_count < len(new_bookings):
                 cleaning_interval["NextCheckIn"] = start
-                # Look for matching cleaner assignment
-                # for cleaner_entry in cleaners_data:
-                #     if cleaner_entry["Flat"] == flat and cleaner_entry[
-                #         "NextCheckIn"
-                #     ] == start.strftime("%d/%m/%Y"):
-                #         cleaning_interval["Cleaner"] = cleaner_entry["Cleaner"]
-                #         break
-
+                cleaning_interval["Cleaner"] = booking["Cleaner"]
             if end == start:
                 cleaning_interval["HotBed"] = True
             cleaning_schedule.append(cleaning_interval)
-        end = event.get("DTEND").dt
+        end = pd.to_datetime(booking["CheckOut"]).date()
         cleaning_interval = {
             "Flat": flat,
             "CheckOut": end,
@@ -126,6 +134,24 @@ def parse_ical_data(flat, ical_text):
             "Cleaner": None,
             "HotBed": False,
         }
+
+    # for event in events:
+    #     event_count += 1
+    #     start = event.get("DTSTART").dt
+    #     if cleaning_interval is not None:
+    #         if event_count < len(events):
+    #             cleaning_interval["NextCheckIn"] = start
+    #         if end == start:
+    #             cleaning_interval["HotBed"] = True
+    #         cleaning_schedule.append(cleaning_interval)
+    #     end = event.get("DTEND").dt
+    #     cleaning_interval = {
+    #         "Flat": flat,
+    #         "CheckOut": end,
+    #         "NextCheckIn": None,
+    #         "Cleaner": None,
+    #         "HotBed": False,
+    #     }
 
     return cleaning_schedule
 
@@ -143,7 +169,9 @@ def cleaning_schedule(ical_calendars, months=3):
     df["CheckOut"] = pd.to_datetime(df["CheckOut"])
     df["NextCheckIn"] = pd.to_datetime(df["NextCheckIn"])
     df = df.fillna("")
-    df = df.sort_values(by=["NextCheckIn", "CheckOut", "Flat"], na_position="last")
+    df = df.sort_values(
+        by=["NextCheckIn", "CheckOut", "Flat", "Cleaner"], na_position="last"
+    )
     df["NextCheckIn"] = df["NextCheckIn"].astype(str).replace("NaT", "")
 
     return df
