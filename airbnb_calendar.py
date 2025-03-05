@@ -168,6 +168,11 @@ def cleaning_schedule(ical_calendars, months=3):
     df = pd.DataFrame(schedule)
     df["CheckOut"] = pd.to_datetime(df["CheckOut"])
     df["NextCheckIn"] = pd.to_datetime(df["NextCheckIn"])
+
+    # Filter for future check-ins or NaT values
+    today = pd.Timestamp.now().normalize()
+    df = df[(df["NextCheckIn"].isna()) | (df["NextCheckIn"] >= today)]
+
     df = df.fillna("")
     df = df.sort_values(
         by=["NextCheckIn", "CheckOut", "Flat", "Cleaner"], na_position="last"
