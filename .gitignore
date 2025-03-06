@@ -1,7 +1,7 @@
 // Description: This file is used to ignore files and directories in the repository.
 // More info: https://docs.github.com/en/github/using-git/ignoring-files
 
-/.streamlit/
+.streamlit/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
