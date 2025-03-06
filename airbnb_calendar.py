@@ -3,8 +3,26 @@ import pandas as pd
 from icalendar import Calendar
 from datetime import datetime, date
 import ace_tools_open as tools
-import json
 import os
+from pymongo import MongoClient
+import urllib.parse
+import streamlit as st
+
+
+def connect_mongo():
+    try:
+        # Connect to MongoDB
+        # Load environment variables
+        db_user = st.secrets["DB_USER"]
+        db_password = urllib.parse.quote_plus(st.secrets["DB_PASSWORD"])
+
+        # Connect to MongoDB
+        connection_string = f"mongodb+srv://{db_user}:{db_password}@cluster0.x29gn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+        client = MongoClient(connection_string)
+        return client
+    except Exception as e:
+        print(f"Error loading calendars from MongoDB: {str(e)}")
+        return None
 
 
 def get_airbnb_ical(ical_url):
@@ -16,38 +34,80 @@ def get_airbnb_ical(ical_url):
         return None
 
 
-def load_cleaners():
-    """Load cleaner assignments from JSON file"""
-    filename = "~/.streamlit/cleaners.json"
-    if os.path.exists(filename):
-        with open(filename, "r") as f:
-            return json.load(f)
-    return []
+# def load_cleaners():
+#     """Load cleaner assignments from JSON file"""
+#     filename = "~/.streamlit/cleaners.json"
+#     if os.path.exists(filename):
+#         with open(filename, "r") as f:
+#             return json.load(f)
+#     return []
 
 
 def load_calendars():
-    """Load cleaner assignments from JSON file"""
-    filename = "calendars.json"
-    if os.path.exists(filename):
-        with open(filename, "r") as f:
-            return json.load(f)
-    return []
+    """Load calendar assignments from MongoDB"""
+    try:
+        client = connect_mongo()
+
+        # Get database and collection
+        db = client["airbnb"]
+        calendars = db.calendars.find({}, {"_id": 0})  # Exclude MongoDB _id field
+
+        # Convert cursor to list
+        calendar_list = list(calendars)
+
+        # Close connection
+        client.close()
+
+        return calendar_list
+    except Exception as e:
+        print(f"Error loading calendars: {str(e)}")
+        return []
 
 
 def load_bookings():
-    """Load existing bookings from JSON file"""
-    filename = "~/.streamlit/bookings.json"
-    if os.path.exists(filename):
-        with open(filename, "r") as f:
-            return json.load(f)
-    return {"flats": []}
+    """Load existing bookings from MongoDB"""
+    try:
+        client = connect_mongo()
+
+        # Get database and collection
+        db = client["airbnb"]
+        bookings = db.bookings.find({}, {"_id": 0})  # Exclude MongoDB _id field
+
+        # Convert cursor to list
+        booking_list = list(bookings)
+
+        # Close connection
+        client.close()
+
+        return booking_list
+    except Exception as e:
+        print(f"Error loading calendars: {str(e)}")
+    return []
 
 
-def save_bookings(bookings_data):
-    """Save bookings to JSON file"""
-    filename = "~/.streamlit/bookings.json"
-    with open(filename, "w") as f:
-        json.dump(bookings_data, f, indent=2)
+def save_bookings(flat_entry):
+    try:
+        """Save bookings to MongoDB"""
+        client = connect_mongo()
+
+        # Get database and collection
+        db = client["airbnb"]
+
+        # Replace document for this flat
+        result = db.bookings.replace_one(
+            {"flat": flat_entry["flat"]},  # filter
+            flat_entry,  # new document
+            upsert=True,  # create if doesn't exist
+        )
+
+        # Close connection
+        client.close()
+
+        return result.acknowledged
+
+    except Exception as e:
+        print(f"Error saving bookings to MongoDB: {str(e)}")
+        return False
 
 
 def parse_ical_data(flat, ical_text):
@@ -59,10 +119,10 @@ def parse_ical_data(flat, ical_text):
     bookings_data = load_bookings()
 
     # Find or create flat entry in bookings
-    flat_entry = next((f for f in bookings_data["flats"] if f["flat"] == flat), None)
+    flat_entry = next((f for f in bookings_data if f["flat"] == flat), None)
     if flat_entry is None:
         flat_entry = {"flat": flat, "bookings": []}
-        bookings_data["flats"].append(flat_entry)
+        bookings_data.append(flat_entry)
 
     # Get current bookings from iCal
     current_bookings = []
@@ -113,7 +173,7 @@ def parse_ical_data(flat, ical_text):
             )
 
     flat_entry["bookings"] = new_bookings
-    save_bookings(bookings_data)
+    save_bookings(flat_entry)
 
     booking_count = 0
     for booking in new_bookings:
@@ -122,7 +182,10 @@ def parse_ical_data(flat, ical_text):
         if cleaning_interval is not None:
             if booking_count < len(new_bookings):
                 cleaning_interval["NextCheckIn"] = start
-                cleaning_interval["Cleaner"] = booking["Cleaner"]
+                try:
+                    cleaning_interval["Cleaner"] = booking["Cleaner"]
+                except:
+                    cleaning_interval["Cleaner"] = None
             if end == start:
                 cleaning_interval["HotBed"] = True
             cleaning_schedule.append(cleaning_interval)
@@ -134,24 +197,6 @@ def parse_ical_data(flat, ical_text):
             "Cleaner": None,
             "HotBed": False,
         }
-
-    # for event in events:
-    #     event_count += 1
-    #     start = event.get("DTSTART").dt
-    #     if cleaning_interval is not None:
-    #         if event_count < len(events):
-    #             cleaning_interval["NextCheckIn"] = start
-    #         if end == start:
-    #             cleaning_interval["HotBed"] = True
-    #         cleaning_schedule.append(cleaning_interval)
-    #     end = event.get("DTEND").dt
-    #     cleaning_interval = {
-    #         "Flat": flat,
-    #         "CheckOut": end,
-    #         "NextCheckIn": None,
-    #         "Cleaner": None,
-    #         "HotBed": False,
-    #     }
 
     return cleaning_schedule
 
@@ -183,17 +228,12 @@ def cleaning_schedule(ical_calendars, months=3):
 
 
 def save_cleaner_info(ap, entrada, fx):
-    """Save cleaner information to bookings.json"""
+    """Save cleaner information to MongoDB"""
     # Load existing bookings
-    filename = "~/.streamlit/bookings.json"
-    if not os.path.exists(filename):
-        raise FileNotFoundError("Arquivo de bookings não encontrado")
-
-    with open(filename, "r") as f:
-        bookings_data = json.load(f)
+    bookings_data = load_bookings()
 
     # Find flat entry
-    flat_entry = next((f for f in bookings_data["flats"] if f["flat"] == ap), None)
+    flat_entry = next((f for f in bookings_data if f["flat"] == ap), None)
     if flat_entry is None:
         raise ValueError(f"Apartamento {ap} não encontrado")
 
@@ -201,21 +241,19 @@ def save_cleaner_info(ap, entrada, fx):
     try:
         entrada_date = pd.to_datetime(entrada.split()[0]).strftime("%Y-%m-%d")
     except:
-        raise ValueError("Data de entrada inválida")
+        raise ValueError(f"Data de entrada inválida: {entrada}")
 
     # Find booking by CheckIn date and update Cleaner
     for booking in flat_entry["bookings"]:
         if booking["CheckIn"] == entrada_date:
             booking["Cleaner"] = fx.replace("🔥 ", "").replace("🔥", "").strip()
-            # Save updated bookings
-            with open(filename, "w") as f:
-                json.dump(bookings_data, f, indent=2)
-            return True
+            return save_bookings(flat_entry)
 
     raise ValueError("Reserva não encontrada")
 
 
 if __name__ == "__main__":
+    save_cleaner_info("908", "2025-03-08", "Teste")
     ical_calendars = load_calendars()
 
     df_cleaning = cleaning_schedule(ical_calendars)
