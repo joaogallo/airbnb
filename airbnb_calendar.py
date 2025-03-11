@@ -64,25 +64,47 @@ def load_calendars():
         return []
 
 
-def load_bookings():
-    """Load existing bookings from MongoDB"""
+def load_bookings(flat: str = None):
+    """Load existing bookings from MongoDB
+
+    Args:
+        flat (str, optional): Flat number to filter bookings. Defaults to None.
+
+    Returns:
+        list: List of booking documents from MongoDB, sorted by CheckIn date
+    """
     try:
         client = connect_mongo()
+        if not client:
+            raise ConnectionError("Failed to connect to MongoDB")
 
         # Get database and collection
         db = client["airbnb"]
-        bookings = db.bookings.find({}, {"_id": 0})  # Exclude MongoDB _id field
 
-        # Convert cursor to list
+        # Create filter based on flat parameter
+        filter_query = {"_id": 0}  # Exclude MongoDB _id field
+        if flat:
+            filter_query["flat"] = flat
+
+        # Query with filter and sort by CheckIn
+        bookings = db.bookings.find({"flat": flat} if flat else {}, {"_id": 0}).sort(
+            "bookings.CheckIn", 1
+        )  # 1 for ascending order
+
+        # Convert cursor to list and sort bookings within each document
         booking_list = list(bookings)
+        for doc in booking_list:
+            if "bookings" in doc:
+                doc["bookings"].sort(key=lambda x: x["CheckIn"])
 
         # Close connection
         client.close()
 
         return booking_list
+
     except Exception as e:
-        print(f"Error loading calendars: {str(e)}")
-    return []
+        print(f"Error loading bookings: {str(e)}")
+        return []
 
 
 def save_bookings(flat_entry):
@@ -116,7 +138,7 @@ def parse_ical_data(flat, ical_text):
     cleaning_interval = None
 
     # Load existing bookings
-    bookings_data = load_bookings()
+    bookings_data = load_bookings(flat)
 
     # Find or create flat entry in bookings
     flat_entry = next((f for f in bookings_data if f["flat"] == flat), None)
@@ -227,15 +249,15 @@ def cleaning_schedule(ical_calendars, months=3):
     return df
 
 
-def save_cleaner_info(ap, entrada, fx):
+def save_cleaner_info(flat, entrada, fx):
     """Save cleaner information to MongoDB"""
     # Load existing bookings
-    bookings_data = load_bookings()
+    bookings_data = load_bookings(flat)
 
     # Find flat entry
-    flat_entry = next((f for f in bookings_data if f["flat"] == ap), None)
+    flat_entry = next((f for f in bookings_data if f["flat"] == flat), None)
     if flat_entry is None:
-        raise ValueError(f"Apartamento {ap} não encontrado")
+        raise ValueError(f"Apartamento {flat} não encontrado")
 
     # Convert date to match bookings.json format
     try:
@@ -253,7 +275,6 @@ def save_cleaner_info(ap, entrada, fx):
 
 
 if __name__ == "__main__":
-    save_cleaner_info("908", "2025-03-08", "Teste")
     ical_calendars = load_calendars()
 
     df_cleaning = cleaning_schedule(ical_calendars)
