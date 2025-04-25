@@ -204,19 +204,23 @@ def parse_ical_data(flat, ical_text):
         if cleaning_interval is not None:
             if booking_count < len(new_bookings):
                 cleaning_interval["NextCheckIn"] = start
-                try:
-                    cleaning_interval["Cleaner"] = booking["Cleaner"]
-                except:
-                    cleaning_interval["Cleaner"] = None
+                # try:
+                #     cleaning_interval["Cleaner"] = booking["Cleaner"]
+                # except:
+                #     cleaning_interval["Cleaner"] = None
             if end == start:
                 cleaning_interval["HotBed"] = True
             cleaning_schedule.append(cleaning_interval)
         end = pd.to_datetime(booking["CheckOut"]).date()
+        try:
+            cleaner = booking["Cleaner"]
+        except:
+            cleaner = None
         cleaning_interval = {
             "Flat": flat,
             "CheckOut": end,
             "NextCheckIn": None,
-            "Cleaner": None,
+            "Cleaner": cleaner,
             "HotBed": False,
         }
 
