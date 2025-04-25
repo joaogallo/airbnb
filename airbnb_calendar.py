@@ -240,11 +240,20 @@ def cleaning_schedule(ical_calendars, months=3):
     today = pd.Timestamp.now().normalize()
     df = df[(df["NextCheckIn"].isna()) | (df["NextCheckIn"] >= today)]
 
+    # Create Sorting column based on conditions
+    df["Sorting"] = df.apply(
+        lambda row: row["CheckOut"]
+        if pd.isna(row["NextCheckIn"])
+        else row["NextCheckIn"],
+        axis=1,
+    )
+
     df = df.fillna("")
     df = df.sort_values(
-        by=["NextCheckIn", "CheckOut", "Flat", "Cleaner"], na_position="last"
+        by=["Sorting", "CheckOut", "Flat", "Cleaner"], na_position="last"
     )
     df["NextCheckIn"] = df["NextCheckIn"].astype(str).replace("NaT", "")
+    df = df.drop("Sorting", axis=1)  # Remove temporary sorting column
 
     return df
 
