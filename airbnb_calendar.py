@@ -262,7 +262,7 @@ def cleaning_schedule(ical_calendars, months=3):
     return df
 
 
-def save_cleaner_info(flat, entrada, fx):
+def save_cleaner_info(flat, saida, fx):
     """Save cleaner information to MongoDB"""
     # Load existing bookings
     bookings_data = load_bookings(flat)
@@ -274,13 +274,13 @@ def save_cleaner_info(flat, entrada, fx):
 
     # Convert date to match bookings.json format
     try:
-        entrada_date = pd.to_datetime(entrada.split()[0]).strftime("%Y-%m-%d")
+        exit_date = pd.to_datetime(saida.split()[0]).strftime("%Y-%m-%d")
     except:
-        raise ValueError(f"Data de entrada inválida: {entrada}")
+        raise ValueError(f"Data de saída inválida: {saida}")
 
     # Find booking by CheckIn date and update Cleaner
     for booking in flat_entry["bookings"]:
-        if booking["CheckIn"] == entrada_date:
+        if booking["CheckOut"] == exit_date:
             booking["Cleaner"] = fx.replace("🔥 ", "").replace("🔥", "").strip()
             return save_bookings(flat_entry)
 

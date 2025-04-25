@@ -111,11 +111,11 @@ def save_cleaner_info(row):
     """UI wrapper for saving cleaner information"""
     try:
         # Convert date from dd/mm/yyyy to yyyy-mm-dd
-        entrada_date = pd.to_datetime(
-            row["Entrada"].split()[0], format="%d/%m/%Y"
-        ).strftime("%Y-%m-%d")
+        exit_date = pd.to_datetime(row["Saída"].split()[0], format="%d/%m/%Y").strftime(
+            "%Y-%m-%d"
+        )
 
-        if airbnb_calendar.save_cleaner_info(row["AP"], entrada_date, row["FX"]):
+        if airbnb_calendar.save_cleaner_info(row["AP"], exit_date, row["FX"]):
             st.success("Informações de faxina salvas com sucesso!")
     except Exception as e:
         st.error(f"Erro ao salvar informações: {str(e)}")
